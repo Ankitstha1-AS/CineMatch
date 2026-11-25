@@ -6,6 +6,7 @@ Data import, validation, seeding and maintenance scripts.
 |---|---|
 | `download_movielens.py` | Download/extract MovieLens into `data/raw/` (gitignored) |
 | `validate_movielens.py` | Schema, duplicate, integrity and sparsity checks |
+| `build_subset.py` | Fixed filters + seeded user sample → `data/processed/` |
 
 ## Download
 
@@ -26,9 +27,31 @@ python scripts/validate_movielens.py data/raw/ml-1m
 
 Results from the first run are recorded in [`../docs/data-inventory.md`](../docs/data-inventory.md).
 
+## Build the training subset
+
+```bash
+python scripts/build_subset.py data/raw/ml-25m \
+  --out data/processed/ml-25m-subset \
+  --min-movie-ratings 10 --min-user-ratings 20 \
+  --max-users 10000 --seed 42 \
+  --manifest-out docs/subsets/ml-25m-subset.json
+```
+
+Produces `ratings.csv`, `movies.csv`, `tags.csv`, `links.csv`, `genome-tags.csv`
+and `manifest.json`. The reasoning behind the filters is in
+[`../docs/eda/README.md`](../docs/eda/README.md).
+
+## EDA
+
+```bash
+python -m ml.eda data/raw/ml-25m
+python -m ml.eda data/processed/ml-25m-subset
+```
+
+Writes `summary.md` and six figures under `docs/eda/<dataset>/`.
+
 Planned additions:
 
-- `build_subset.py` — fixed subset filters after EDA (Phase 1)
 - `import_movielens.py` — load the cleaned subset into PostgreSQL (Phase 1)
 - `seed_demo_data.py` — demo users and ratings (Phase 1/2)
 
