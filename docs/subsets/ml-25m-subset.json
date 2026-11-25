@@ -1,0 +1,27 @@
+{
+  "name": "ml-25m-subset",
+  "created_at": "2026-11-25T04:25:13+00:00",
+  "source": "data\\raw\\ml-25m",
+  "source_ratings_file": "data\\raw\\ml-25m\\ratings.csv",
+  "source_ratings_sha256": "9c85525758597dca76e8d98cebb9c13e018c2317b09a0878b6d383179526e385",
+  "filters": {
+    "min_movie_ratings": 10,
+    "min_user_ratings": 20,
+    "max_users": 10000,
+    "seed": 42
+  },
+  "source_counts": {
+    "ratings": 25000095,
+    "users": 162541,
+    "movies": 59047
+  },
+  "counts": {
+    "ratings": 1478848,
+    "users": 9960,
+    "movies": 8737,
+    "tags": 60237
+  },
+  "rating_min": 0.5,
+  "rating_max": 5.0,
+  "rating_mean": 3.545321464538574
+}
