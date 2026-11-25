@@ -1,0 +1,44 @@
+name: cinematch
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-cinematch}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cinematch}
+      POSTGRES_DB: ${POSTGRES_DB:-cinematch}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-cinematch} -d ${POSTGRES_DB:-cinematch}",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./backend
+    environment:
+      ENVIRONMENT: development
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-cinematch}:${POSTGRES_PASSWORD:-cinematch}@db:5432/${POSTGRES_DB:-cinematch}
+      CORS_ORIGINS: '["http://localhost:5173","http://localhost:8080"]'
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT:-8080}:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

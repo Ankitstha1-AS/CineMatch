@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cinematch-backend"
+version = "0.1.0"
+description = "CineMatch API: explainable hybrid movie recommendations."
+requires-python = ">=3.11,<3.13"
+dependencies = [
+    "fastapi==0.115.6",
+    "uvicorn[standard]==0.34.0",
+    "pydantic==2.10.4",
+    "pydantic-settings==2.7.0",
+    "sqlalchemy==2.0.36",
+    "alembic==1.14.0",
+    "psycopg[binary]==3.2.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-cov==6.0.0",
+    "httpx==0.28.1",
+    "ruff==0.8.4",
+]
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --cov=app --cov-report=term-missing --cov-fail-under=70"
+
+[tool.coverage.run]
+source = ["app"]

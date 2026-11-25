@@ -1,0 +1,11 @@
+# ML dependencies are installed separately from the backend so the API image
+# stays small and CI does not need a compiler for scikit-surprise.
+#
+# NumPy is held below 2.0 because scikit-surprise 1.1.5 predates the NumPy 2 ABI.
+numpy==1.26.4
+pandas==2.2.3
+scipy==1.14.1
+scikit-learn==1.5.2
+scikit-surprise==1.1.5
+joblib==1.4.2
+pyyaml==6.0.2
