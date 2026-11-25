@@ -9,3 +9,5 @@ scikit-learn==1.5.2
 scikit-surprise==1.1.5
 joblib==1.4.2
 pyyaml==6.0.2
+# TLS bundle for scripts/download_movielens.py (Windows Python often lacks a full CA chain).
+certifi==2026.11.20
