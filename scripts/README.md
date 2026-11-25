@@ -7,6 +7,7 @@ Data import, validation, seeding and maintenance scripts.
 | `download_movielens.py` | Download/extract MovieLens into `data/raw/` (gitignored) |
 | `validate_movielens.py` | Schema, duplicate, integrity and sparsity checks |
 | `build_subset.py` | Fixed filters + seeded user sample → `data/processed/` |
+| `import_movielens.py` | Load the catalogue into PostgreSQL (idempotent) |
 
 ## Download
 
@@ -50,9 +51,28 @@ python -m ml.eda data/processed/ml-25m-subset
 
 Writes `summary.md` and six figures under `docs/eda/<dataset>/`.
 
+## Import the catalogue
+
+Apply the schema first (`cd backend && alembic upgrade head`), then:
+
+```bash
+python scripts/import_movielens.py data/processed/ml-25m-subset
+```
+
+The importer uses `DATABASE_URL` (or `--database-url`), matches existing rows on
+`ml_movie_id`, and updates them instead of duplicating. Only the catalogue is
+imported; MovieLens ratings remain training data. For a serverless smoke test:
+
+```bash
+python scripts/import_movielens.py data/processed/ml-25m-subset \
+  --database-url sqlite:///data/processed/cinematch-dev.sqlite --create-tables
+```
+
+Run it with the backend virtual environment (it needs SQLAlchemy and psycopg).
+See [`../docs/database.md`](../docs/database.md).
+
 Planned additions:
 
-- `import_movielens.py` — load the cleaned subset into PostgreSQL (Phase 1)
 - `seed_demo_data.py` — demo users and ratings (Phase 1/2)
 
 Scripts must read configuration from environment variables or CLI flags and must

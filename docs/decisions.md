@@ -42,3 +42,30 @@ the decision, and the consequences.
   and the machine is rebooted.
 - **Consequences:** Phase 0's "running skeleton" is demonstrated with local
   `uvicorn` + Vite. Compose validation is a follow-up task.
+
+## ADR-004: Surrogate movie keys plus a catalogue-only MovieLens import
+
+- **Context:** the app needs its own primary keys (stable API URLs, cascade rules,
+  manually curated metadata), while offline artifacts are keyed by MovieLens ids.
+  The MovieLens ratings themselves are training data, not application data.
+- **Decision:** give `movies` an autoincrement `id` and a unique `ml_movie_id`.
+  Import only the catalogue (movies, genres, tags, TMDB ids) into PostgreSQL;
+  keep MovieLens ratings in the processed files. `ratings` holds only ratings from
+  real CineMatch accounts.
+- **Consequences:** model artifacts join to the catalogue through `ml_movie_id`.
+  Re-running the importer is idempotent. Demo and user-study data stay honest, and
+  there are no synthetic accounts to purge. If a future phase needs MovieLens
+  ratings in the database for analysis, it must use a separate staging table rather
+  than the production `ratings` table.
+
+## ADR-005: Test on SQLite, deploy on PostgreSQL
+
+- **Context:** Docker-based PostgreSQL is unavailable until WSL2 is installed
+  (ADR-003), but schema and importer behaviour still need automated tests.
+- **Decision:** declare dialect variants for JSONB (→ JSON) and BIGINT primary keys
+  (→ INTEGER) in `app/db/types.py`, and run the test suite against in-memory SQLite.
+  Alembic still targets PostgreSQL and its DDL is verified with
+  `alembic upgrade head --sql`.
+- **Consequences:** fast, serverless tests; PostgreSQL-specific features (JSONB
+  operators, partial indexes in production) must be checked when the Docker stack
+  is finally run. The schema avoids constructs SQLite cannot model.

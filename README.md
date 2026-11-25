@@ -9,9 +9,11 @@ It learns a viewer's taste from star ratings and returns movie recommendations t
 combine content-based and collaborative filtering — and it explains every suggestion
 in plain language.
 
-> **Status: Phase 0 — Foundation.**
-> The repository skeleton, health-check API, Docker Compose stack and CI pipeline are in
-> place. The recommendation engine, catalogue and UI are built in later phases.
+> **Status: Phase 1 — Data and schema.**
+> Phase 0 delivered the repository skeleton, health-check API, Docker Compose stack
+> and CI. Phase 1 adds the validated MovieLens data pipeline (download → EDA →
+> seeded subset) and the PostgreSQL schema with ORM models, an Alembic migration
+> and a catalogue importer. The recommendation engine and UI follow in later phases.
 
 ## Why it exists
 
@@ -49,11 +51,14 @@ user rates more films.
 │   ├── app/
 │   │   ├── api/v1/           # routers (health now; auth/catalogue later)
 │   │   ├── core/             # settings, security, dependencies
-│   │   ├── services/         # business logic
+│   │   ├── db/               # declarative base, session factory, portable types
+│   │   ├── services/         # business logic (catalogue importer)
 │   │   ├── repositories/     # SQLAlchemy access
-│   │   ├── models/           # ORM models
+│   │   ├── models/           # ORM models (users, movies, ratings, ...)
 │   │   ├── schemas/          # Pydantic schemas
 │   │   └── inference/        # TF-IDF, SVD, item-KNN, blender, explainer
+│   ├── alembic/              # migration environment and versions
+│   ├── alembic.ini
 │   ├── tests/
 │   ├── pyproject.toml
 │   └── Dockerfile
@@ -98,7 +103,8 @@ python -m venv .venv
 # macOS/Linux:
 source .venv/bin/activate
 
-pip install -r requirements.txt
+pip install -e ".[dev]"
+alembic upgrade head          # needs a reachable PostgreSQL (see Database)
 uvicorn app.main:app --reload
 ```
 
@@ -125,6 +131,39 @@ docker compose up --build
 - Frontend: <http://localhost:8080>
 - API: <http://localhost:8000>
 - PostgreSQL: `localhost:5432`
+
+Create the schema inside the Compose network:
+
+```bash
+docker compose run --rm api alembic upgrade head
+```
+
+Then import the catalogue from the host (the database port is published):
+
+```bash
+python scripts/import_movielens.py data/processed/ml-25m-subset
+```
+
+## Database
+
+The schema has six tables — `users`, `movies`, `ratings`, `feedback`,
+`model_versions` and `usage_logs` — created by Alembic from the SQLAlchemy models.
+See [`docs/database.md`](docs/database.md) for the ERD and design rules.
+
+```bash
+cd backend
+alembic upgrade head            # create/upgrade the schema
+alembic upgrade head --sql      # print the PostgreSQL DDL without connecting
+```
+
+Load the MovieLens catalogue (idempotent; imports movies, genres, tags and TMDB ids):
+
+```bash
+python scripts/import_movielens.py data/processed/ml-25m-subset
+```
+
+MovieLens **ratings** are not imported: they are training data for the offline
+pipeline. The `ratings` table holds ratings from real CineMatch accounts.
 
 ## API
 
@@ -165,7 +204,26 @@ cd ..
 python -m ml.pipeline.run --config ml/config.yaml
 ```
 
-Phase 0 validates the config only. Training, evaluation and model manifests are
+### Data preparation
+
+```bash
+# Download and validate MovieLens releases (raw files are gitignored)
+python scripts/download_movielens.py latest-small 1m 25m
+python scripts/validate_movielens.py data/raw/ml-25m
+
+# Exploratory analysis -> docs/eda/<dataset>/
+python -m ml.eda data/raw/ml-25m
+
+# Fixed, seeded, laptop-sized training subset -> data/processed/
+python scripts/build_subset.py data/raw/ml-25m \
+  --out data/processed/ml-25m-subset \
+  --min-movie-ratings 10 --min-user-ratings 20 \
+  --max-users 10000 --seed 42 \
+  --manifest-out docs/subsets/ml-25m-subset.json
+```
+
+Current subset: **1,478,848 ratings**, 9,960 users, 8,737 movies. Findings and
+figures are in [`docs/eda/`](docs/eda/README.md); the model pipeline itself is
 implemented in Phases 2–3. Raw MovieLens data is never committed or redistributed.
 
 ## Design summary
