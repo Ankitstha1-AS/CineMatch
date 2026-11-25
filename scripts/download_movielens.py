@@ -124,9 +124,7 @@ def verify(dataset: str, expected_dir: Path) -> None:
     required = DATASETS[dataset][2]
     missing = [name for name in required if not (expected_dir / name).is_file()]
     if missing:
-        raise FileNotFoundError(
-            f"{dataset}: missing required files: {', '.join(missing)}"
-        )
+        raise FileNotFoundError(f"{dataset}: missing required files: {', '.join(missing)}")
 
 
 def fetch(dataset: str, dest: Path, force: bool = False) -> Path:
@@ -161,9 +159,7 @@ def parse_args() -> argparse.Namespace:
         default=DEFAULT_DEST,
         help=f"Destination directory (default: {DEFAULT_DEST}).",
     )
-    parser.add_argument(
-        "--force", action="store_true", help="Re-download and re-extract."
-    )
+    parser.add_argument("--force", action="store_true", help="Re-download and re-extract.")
     return parser.parse_args()
 
 
