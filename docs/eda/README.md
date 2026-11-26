@@ -2,7 +2,8 @@
 
 Generated with `python -m ml.eda <dataset-dir>`. Every folder contains a
 `summary.md` and six PNG figures (rating distribution, user activity, long tail,
-Lorenz curve, ratings per year, top genres).
+Lorenz curve, ratings per year, top genres). The presentation notebook is
+[`../../ml/notebooks/01_data_exploration.ipynb`](../../ml/notebooks/01_data_exploration.ipynb).
 
 | Dataset | Ratings | Users | Movies | Sparsity | Popularity Gini |
 |---|---|---|---|---|---|

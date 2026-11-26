@@ -34,6 +34,16 @@ python -m ml.pipeline.run --config ml/config.yaml
 Phase 0 only validates the config. Ingest, splitting, training, and export are
 implemented in Phases 2 and 3.
 
+## Data exploration
+
+```bash
+python -m ml.eda data/raw/ml-25m
+python -m ml.eda data/processed/ml-25m-subset
+```
+
+Writes `summary.md` plus six figures to `docs/eda/<dataset>/`. The presentation
+notebook is [`notebooks/01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb).
+
 ## Layout
 
 - `pipeline/` — ingest, clean, features, split, train, export
