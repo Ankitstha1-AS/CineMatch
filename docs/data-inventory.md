@@ -52,6 +52,14 @@ All three releases and the subset passed `scripts/validate_movielens.py`:
 | Distinct tags | 1,589 | — | 73,050 | 12,016 |
 | Movie tag coverage | 16.1% | — | 72.5% | 60.9% |
 
+## Database
+
+The catalogue importer was verified against a SQLite smoke-test database: 8,737
+movies, 5,323 with tags, 8,734 with TMDB ids, and a second run updated all 8,737
+rows without creating duplicates. PostgreSQL population is pending the
+Docker/WSL2 unblock; the migration's PostgreSQL DDL is generated in CI. See
+[`database.md`](database.md) for the schema, ERD and importer details.
+
 ## Notes
 
 - **Rating scales differ.** latest-small and 25M use half-star values; ml-1m uses
