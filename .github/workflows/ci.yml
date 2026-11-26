@@ -35,6 +35,9 @@ jobs:
       - name: Format check
         run: ruff format --check .
 
+      - name: Migration DDL (offline)
+        run: alembic upgrade head --sql > /dev/null
+
       - name: Test
         run: pytest
 
