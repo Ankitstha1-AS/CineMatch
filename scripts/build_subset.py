@@ -112,7 +112,7 @@ def build(dataset_dir: Path, args: argparse.Namespace) -> dict[str, object]:
 
     links = dataset_dir / "links.csv"
     if links.is_file():
-        link_frame = pd.read_csv(links)
+        link_frame = pd.read_csv(links, dtype={"imdbId": "string", "tmdbId": "Int64"})
         link_frame[link_frame["movieId"].isin(keep_movies)].to_csv(
             out_dir / "links.csv", index=False
         )
