@@ -31,8 +31,8 @@ From the repository root:
 python -m ml.pipeline.run --config ml/config.yaml
 ```
 
-Phase 0 only validates the config. Ingest, splitting, training, and export are
-implemented in Phases 2 and 3.
+The runner currently validates the config. Data preparation and the evaluation
+split are available; models arrive in the next Phase 2 slices.
 
 ## Data exploration
 
@@ -43,6 +43,35 @@ python -m ml.eda data/processed/ml-25m-subset
 
 Writes `summary.md` plus six figures to `docs/eda/<dataset>/`. The presentation
 notebook is [`notebooks/01_data_exploration.ipynb`](notebooks/01_data_exploration.ipynb).
+
+## Evaluation split
+
+```bash
+python -m ml.pipeline.split --config ml/config.yaml
+```
+
+Per-user temporal hold-out: the newest 20% of each user's ratings become the test
+set, the newest 10% of the remaining history becomes validation, and the rest is
+train. The split is deterministic (timestamp order, movie id breaks ties). Users
+with fewer than 5 ratings are dropped. Partitions are written under
+`data/processed/<dataset>/splits/` (gitignored) and summarised in
+[`../docs/splits/ml-25m-subset.json`](../docs/splits/ml-25m-subset.json).
+
+Current subset: train 1,068,184 / validation 118,785 / test 291,879 ratings,
+9,960 users, 0 dropped.
+
+## Tests
+
+```bash
+cd ml
+python -m pip install pytest==8.3.4 ruff==0.8.4
+python -m pytest
+ruff check .
+ruff format --check .
+```
+
+Metrics live in `ml/evaluation/metrics.py` (RMSE, MAE, Precision/Recall/NDCG@K,
+coverage, novelty) and are unit-tested against hand-computed values.
 
 ## Layout
 

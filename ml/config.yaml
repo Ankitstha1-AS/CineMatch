@@ -1,17 +1,17 @@
 # Offline training configuration.
-# Phase 0 only loads and validates this file; training arrives in Phase 2.
 
 seed: 42
 
 dataset:
-  # Development uses the small MovieLens release; the final subset is fixed after EDA.
-  name: ml-latest-small
-  path: data/raw/ml-latest-small
+  # Fixed, seeded subset built by scripts/build_subset.py (see docs/eda/README.md).
+  name: ml-25m-subset
+  path: data/processed/ml-25m-subset
 
 split:
   # Per-user temporal hold-out described in AGENTS.md section 4.
   test_fraction: 0.2
   validation_fraction: 0.1
+  min_ratings: 5
 
 hybrid:
   alpha_max: 0.8
@@ -21,3 +21,5 @@ hybrid:
 evaluation:
   k_values: [5, 10, 20]
   relevance_threshold: 4.0
+  # Set to a number for quick development runs; null evaluates every test user.
+  max_users: null

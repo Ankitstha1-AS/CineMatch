@@ -1,0 +1,42 @@
+{
+  "dataset": "ml-25m-subset",
+  "created_at": "2026-11-26T04:47:22+00:00",
+  "protocol": "per-user temporal hold-out",
+  "config": {
+    "test_fraction": 0.2,
+    "validation_fraction": 0.1,
+    "min_ratings": 5
+  },
+  "counts": {
+    "train": 1068184,
+    "validation": 118785,
+    "test": 291879
+  },
+  "splits": {
+    "train": {
+      "ratings": 1068184,
+      "users": 9960,
+      "movies": 8734,
+      "rating_mean": 3.570134401321411,
+      "timestamp_min": "1996-01-29T00:00:00+00:00",
+      "timestamp_max": "2019-11-20T19:10:34+00:00"
+    },
+    "validation": {
+      "ratings": 118785,
+      "users": 9960,
+      "movies": 8070,
+      "rating_mean": 3.483924627304077,
+      "timestamp_min": "1996-03-01T00:00:00+00:00",
+      "timestamp_max": "2019-11-20T19:20:41+00:00"
+    },
+    "test": {
+      "ratings": 291879,
+      "users": 9960,
+      "movies": 8704,
+      "rating_mean": 3.4795000553131104,
+      "timestamp_min": "1996-03-01T00:00:00+00:00",
+      "timestamp_max": "2019-11-21T01:47:00+00:00"
+    }
+  },
+  "dropped_users": 0
+}

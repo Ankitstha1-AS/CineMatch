@@ -42,7 +42,8 @@ def main() -> int:
     print(f"Loaded config from {args.config}")
     print(f"  dataset: {dataset}")
     print(f"  seed: {config.get('seed')}")
-    print("Training and evaluation are implemented in Phases 2 and 3 (see AGENTS.md).")
+    print("Build the evaluation split with `python -m ml.pipeline.split`.")
+    print("Model training and evaluation arrive in the next Phase 2 slices.")
     return 0
 
 
