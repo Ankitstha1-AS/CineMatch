@@ -161,7 +161,8 @@ and is safe to re-run after refreshing the subset.
 
 ### Verified import
 
-Run on 2026-11-25 against the SQLite smoke-test database:
+Run on 2026-11-26 against PostgreSQL 16 (fresh database, migration applied with
+Alembic) and repeated against a SQLite smoke-test database:
 
 | Check | Result |
 |---|---|
@@ -170,8 +171,14 @@ Run on 2026-11-25 against the SQLite smoke-test database:
 | Movies with tags | 5,323 |
 | Movies with a TMDB id | 8,734 |
 | Movies without a parsed year | 13 |
-| Spot check (`ml_movie_id = 1`) | `Toy Story (1995)`, `["Adventure", "Animation", "Children", "Comedy", "Fantasy"]`, TMDB `862` |
+| Spot check (`ml_movie_id = 1`) | `Toy Story (1995)`, genres stored as JSONB, TMDB `862` |
+| JSONB containment (`genres @> '["Animation"]'`) | 418 movies |
+| `uq_model_versions_one_active` | present and enforced (`WHERE is_active`) |
+| Rating check constraint | rejects 6.0 |
+| `alembic downgrade base` → `upgrade head` | drops all six tables and both enums, then recreates them |
 
-The PostgreSQL run is blocked only on the local Docker daemon (see
-[ADR-003](decisions.md)); the migration's PostgreSQL DDL was generated and reviewed
-with `alembic upgrade head --sql`.
+The same checks run in CI: the backend job starts a PostgreSQL 16 service
+container, applies the migration and runs `backend/tests/test_postgres.py`.
+`docker compose` itself is still unverified locally because the Docker daemon
+needs WSL2 (see [ADR-003](decisions.md)).
+

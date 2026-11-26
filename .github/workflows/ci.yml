@@ -17,6 +17,23 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: cinematch
+          POSTGRES_PASSWORD: cinematch
+          POSTGRES_DB: cinematch
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U cinematch -d cinematch"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql+psycopg://cinematch:cinematch@localhost:5432/cinematch
+      CINEMATCH_TEST_POSTGRES_URL: postgresql+psycopg://cinematch:cinematch@localhost:5432/cinematch
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +54,9 @@ jobs:
 
       - name: Migration DDL (offline)
         run: alembic upgrade head --sql > /dev/null
+
+      - name: Apply migrations to PostgreSQL
+        run: alembic upgrade head
 
       - name: Test
         run: pytest

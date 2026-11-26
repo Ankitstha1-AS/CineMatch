@@ -54,10 +54,12 @@ All three releases and the subset passed `scripts/validate_movielens.py`:
 
 ## Database
 
-The catalogue importer was verified against a SQLite smoke-test database: 8,737
+The catalogue importer was verified against PostgreSQL 16 and SQLite: 8,737
 movies, 5,323 with tags, 8,734 with TMDB ids, and a second run updated all 8,737
-rows without creating duplicates. PostgreSQL population is pending the
-Docker/WSL2 unblock; the migration's PostgreSQL DDL is generated in CI. See
+rows without creating duplicates. JSONB queries, the single-active partial index,
+the rating check constraint and the downgrade/upgrade cycle also pass. CI repeats
+these checks on every push with a PostgreSQL 16 service container; the local
+Docker Compose stack is still pending the WSL2 unblock. See
 [`database.md`](database.md) for the schema, ERD and importer details.
 
 ## Notes
