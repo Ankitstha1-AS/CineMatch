@@ -18,6 +18,26 @@ hybrid:
   alpha_min: 0.2
   decay: 0.1
 
+baselines:
+  bias:
+    regularisation: 10.0
+    iterations: 10
+  popularity:
+    min_votes: 10.0
+
+models:
+  content:
+    # TF-IDF over genres + tags; terms in fewer movies than min_df are dropped.
+    min_df: 2
+    neighbour_k: 20
+  item_knn:
+    neighbours: 50
+    # Shrink sparse similarities towards the user mean.
+    significance: 10.0
+    shrinkage: 5.0
+  svd:
+    factors: 32
+
 evaluation:
   k_values: [5, 10, 20]
   relevance_threshold: 4.0
