@@ -11,28 +11,42 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Use **Python 3.12**. `scikit-surprise==1.1.5` has no Python 3.13 wheel, so pip
-would try to compile it.
+Use **Python 3.12**. scikit-surprise is not required: M4 is a NumPy/SciPy
+implementation (see [ADR-002](../docs/decisions.md)).
 
 ### Surprise and Smart App Control
 
 On this laptop the Surprise wheel installs but cannot be imported: Windows Smart
 App Control blocks its unsigned DLL. NumPy, SciPy, scikit-learn and pandas are
-unaffected. As recorded in [`../docs/decisions.md`](../docs/decisions.md), M4
-uses Surprise when it imports and otherwise falls back to a pure NumPy/SciPy
-SVD. Do not disable Smart App Control just for this project; CI runs on Linux,
-where Surprise imports normally.
+unaffected. As recorded in [`../docs/decisions.md`](../docs/decisions.md), M4 is
+implemented as a pure NumPy/SciPy biased matrix factorisation, so the pipeline
+runs identically here and in CI. Do not disable Smart App Control just for this
+project.
 
 ## Run
 
 From the repository root:
 
 ```bash
-python -m ml.pipeline.run --config ml/config.yaml
+python -m ml.pipeline.run --config ml/config.yaml      # validate config
+python -m ml.pipeline.split --config ml/config.yaml    # build the split
+python -m ml.pipeline.evaluate --config ml/config.yaml # M0-M4 on validation
 ```
 
-The runner currently validates the config. Data preparation and the evaluation
-split are available; models arrive in the next Phase 2 slices.
+`evaluate` fits the bias, popularity, TF-IDF content, item-KNN and biased SVD
+models, then writes metrics, hyper-parameters, fit times and dataset hashes to
+`docs/results/<dataset>-<split>.json`. Use `--split test` only for the final
+once-only run; `--max-users` samples ranking users for quick development runs.
+
+To persist fitted models and the manifest as a versioned bundle:
+
+```bash
+python -m ml.pipeline.export --config ml/config.yaml --version baselines
+```
+
+The bundle (`ml/artifacts/<version>/{models.joblib,manifest.json}`) is gitignored
+and records the dataset hashes, seeds, hyper-parameters and validation metrics,
+so a run can be reproduced and audited later.
 
 ## Data exploration
 
@@ -73,10 +87,19 @@ ruff format --check .
 Metrics live in `ml/evaluation/metrics.py` (RMSE, MAE, Precision/Recall/NDCG@K,
 coverage, novelty) and are unit-tested against hand-computed values.
 
+## Phase 2 results
+
+Validation results for M0–M4, the protocol and dataset fingerprints are written
+up in [`../docs/results/phase-2-baselines.md`](../docs/results/phase-2-baselines.md).
+Headline: M4 has the best rating error (RMSE 0.8460), M3 the best ranking
+(NDCG@10 0.0609), and M2 the widest catalogue coverage (51.2% at K = 10).
+
 ## Layout
 
-- `pipeline/` — ingest, clean, features, split, train, export
-- `evaluation/` — metrics, cold-start, alpha sweep, significance
+- `data.py`, `splits.py`, `features.py` — loading, temporal split, TF-IDF features
+- `models/` — M0 biases, M1 popularity, M2 content, M3 item-KNN, M4 biased SVD
+- `pipeline/` — ingest, clean, features, split, train, evaluate, export
+- `evaluation/` — metrics, rating/ranking harness, cold-start, alpha sweep
 - `notebooks/` — exploratory analysis only (never imported by the app)
 - `artifacts/` — versioned `model.joblib` + `manifest.json` (gitignored)
 

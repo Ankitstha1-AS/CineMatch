@@ -19,7 +19,7 @@ def rmse(actual: Sequence[float], predicted: Sequence[float]) -> float:
 
     if len(actual) != len(predicted):
         raise ValueError("actual and predicted must have the same length")
-    if not actual:
+    if len(actual) == 0:
         raise ValueError("cannot compute RMSE on an empty set")
     errors = np.asarray(actual, dtype=float) - np.asarray(predicted, dtype=float)
     return float(np.sqrt(np.mean(np.square(errors))))
@@ -30,7 +30,7 @@ def mae(actual: Sequence[float], predicted: Sequence[float]) -> float:
 
     if len(actual) != len(predicted):
         raise ValueError("actual and predicted must have the same length")
-    if not actual:
+    if len(actual) == 0:
         raise ValueError("cannot compute MAE on an empty set")
     errors = np.asarray(actual, dtype=float) - np.asarray(predicted, dtype=float)
     return float(np.mean(np.abs(errors)))
