@@ -12,7 +12,7 @@ the decision, and the consequences.
 - **Consequences:** `pip install` fails fast on 3.13 instead of attempting a
   source build. CI uses 3.12.
 
-## ADR-002: Surprise with a NumPy SVD fallback (M4)
+## ADR-002: NumPy/SciPy SVD for M4 (Surprise blocked)
 
 - **Context:** the `scikit-surprise==1.1.5` wheel for CPython 3.12 installs, but
   importing it on the development laptop fails:
@@ -25,13 +25,15 @@ the decision, and the consequences.
   Windows Smart App Control is in enforcement mode
   (`VerifiedAndReputablePolicyState = 1`) and blocks the unsigned Surprise DLL.
   NumPy, SciPy, scikit-learn and pandas import normally.
-- **Decision:** keep `scikit-surprise==1.1.5` as the preferred M4 implementation,
-  but ship a pure NumPy/SciPy SVD fallback that is selected automatically when
-  Surprise cannot be imported. Do **not** disable Smart App Control as part of
-  the project. CI (Linux) exercises the Surprise path.
-- **Consequences:** local Windows runs use the fallback; results must record
-  which implementation produced each manifest. The fallback also serves as the
-  extra comparison model planned in AGENTS.md section 4.
+- **Decision:** implement M4 as a pure NumPy/SciPy biased matrix factorisation
+  (regularised biases plus truncated SVD of the residual matrix) and do not
+  depend on scikit-surprise. Do **not** disable Smart App Control as part of the
+  project. Surprise remains an optional comparison if it can be installed on the
+  deployment machine, but it is not required and is absent from
+  `ml/requirements.txt`.
+- **Consequences:** the pipeline runs identically on this laptop and in CI. The
+  NumPy/SciPy implementation doubles as the extra comparison model planned in
+  AGENTS.md section 4. Manifests record the factorisation parameters and seed.
 
 ## ADR-003: Native dev servers first, Docker Compose once WSL2 is enabled
 

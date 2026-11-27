@@ -11,8 +11,8 @@ source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Use **Python 3.12**. `scikit-surprise==1.1.5` has no Python 3.13 wheel, so pip
-would try to compile it.
+Use **Python 3.12**. scikit-surprise is not required: M4 is a NumPy/SciPy
+implementation (see [ADR-002](../docs/decisions.md)).
 
 ### Surprise and Smart App Control
 
