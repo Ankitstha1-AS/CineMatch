@@ -1,0 +1,214 @@
+{
+  "dataset": "ml-25m-subset",
+  "split": "validation",
+  "generated_at": "2026-11-27T14:44:00+00:00",
+  "fitted_on": "train",
+  "dataset_digests": {
+    "ratings.csv": "9fa386df4a445c76e8a4187c5bf99f67b837c33ac30797f2ac1bd9556cf76018",
+    "movies.csv": "783aa5e6e98bb02089fc3c97aa9cf4977a9b74b88cdef42a79e7f9c4695d10de",
+    "tags.csv": "db75a1b383927ef15ca5de1a12729cebad8dae279c1e02b3deca1a24aa67ef28"
+  },
+  "config": {
+    "k_values": [
+      5,
+      10,
+      20
+    ],
+    "relevance_threshold": 4.0,
+    "max_users": null,
+    "seed": 42
+  },
+  "models": {
+    "M0": {
+      "rating": {
+        "rmse": 0.8633769648178394,
+        "mae": 0.6557786472141438,
+        "predictions": 118785.0
+      },
+      "ranking": {
+        "users": 9137,
+        "relevant_users": 9137,
+        "metrics": {
+          "precision@5": 0.008668052971434883,
+          "recall@5": 0.010938547724142501,
+          "ndcg@5": 0.0105092353522376,
+          "precision@10": 0.006588595819196726,
+          "recall@10": 0.014970776436276357,
+          "ndcg@10": 0.011485128439718753,
+          "precision@20": 0.006221954689723039,
+          "recall@20": 0.028839244453426248,
+          "ndcg@20": 0.015735670580743568
+        },
+        "coverage": {
+          "coverage@5": 0.03216206936019229,
+          "coverage@10": 0.04566784937621609,
+          "coverage@20": 0.0634084926176033
+        },
+        "novelty": {
+          "novelty@5": 11.74489866879031,
+          "novelty@10": 11.64973327220335,
+          "novelty@20": 11.924261903130224
+        }
+      },
+      "parameters": {
+        "regularisation": 10.0,
+        "iterations": 10
+      },
+      "fit_seconds": 0.6
+    },
+    "M1": {
+      "rating": {
+        "rmse": 0.9598537938252348,
+        "mae": 0.7409434619609071,
+        "predictions": 118785.0
+      },
+      "ranking": {
+        "users": 9137,
+        "relevant_users": 9137,
+        "metrics": {
+          "precision@5": 0.016175987742147346,
+          "recall@5": 0.021039722681379127,
+          "ndcg@5": 0.023887285511511275,
+          "precision@10": 0.013396081864944566,
+          "recall@10": 0.03269197047640262,
+          "ndcg@10": 0.027210502382597642,
+          "precision@20": 0.009729670570208853,
+          "recall@20": 0.043628790200490576,
+          "ndcg@20": 0.03037495580837231
+        },
+        "coverage": {
+          "coverage@5": 0.0035481286482774406,
+          "coverage@10": 0.005722788142382969,
+          "coverage@20": 0.009499828316355728
+        },
+        "novelty": {
+          "novelty@5": 9.990239970334166,
+          "novelty@10": 10.276171514299637,
+          "novelty@20": 10.616376468220674
+        }
+      },
+      "parameters": {
+        "min_votes": 10.0
+      },
+      "fit_seconds": 0.1
+    },
+    "M2": {
+      "rating": {
+        "rmse": 0.9021438295233583,
+        "mae": 0.6860812800064784,
+        "predictions": 118785.0
+      },
+      "ranking": {
+        "users": 9137,
+        "relevant_users": 9137,
+        "metrics": {
+          "precision@5": 0.011863850279085137,
+          "recall@5": 0.017621938610135304,
+          "ndcg@5": 0.018160746977096583,
+          "precision@10": 0.009062055379227297,
+          "recall@10": 0.02588042194520755,
+          "ndcg@10": 0.0205857554081884,
+          "precision@20": 0.007119404618583694,
+          "recall@20": 0.0399056209783453,
+          "ndcg@20": 0.025182211157149314
+        },
+        "coverage": {
+          "coverage@5": 0.4059745908206478,
+          "coverage@10": 0.5123039945061234,
+          "coverage@20": 0.6022662241043837
+        },
+        "novelty": {
+          "novelty@5": 13.685037173045732,
+          "novelty@10": 13.892973215360122,
+          "novelty@20": 14.109233457328031
+        }
+      },
+      "parameters": {
+        "features": "tf-idf over genres and tags",
+        "vocabulary_size": 4798,
+        "neighbour_k": 20,
+        "high_rating": 4.0
+      },
+      "fit_seconds": 21.9
+    },
+    "M3": {
+      "rating": {
+        "rmse": 0.9152932862390372,
+        "mae": 0.6944639334287103,
+        "predictions": 118785.0
+      },
+      "ranking": {
+        "users": 9137,
+        "relevant_users": 9137,
+        "metrics": {
+          "precision@5": 0.0401882455948333,
+          "recall@5": 0.04176715366571789,
+          "ndcg@5": 0.051155235438180464,
+          "precision@10": 0.03577760752982389,
+          "recall@10": 0.07421737114734772,
+          "ndcg@10": 0.060899586189685016,
+          "precision@20": 0.03142169202145235,
+          "recall@20": 0.12648937755815287,
+          "ndcg@20": 0.07828927631691675
+        },
+        "coverage": {
+          "coverage@5": 0.1549731028957308,
+          "coverage@10": 0.19823738125214604,
+          "coverage@20": 0.2572965548815383
+        },
+        "novelty": {
+          "novelty@5": 9.516230631381445,
+          "novelty@10": 9.577124196577117,
+          "novelty@20": 9.678191611841557
+        }
+      },
+      "parameters": {
+        "neighbours": 50,
+        "significance": 10.0,
+        "shrinkage": 5.0,
+        "items": 8734,
+        "similarity_pairs": 436700
+      },
+      "fit_seconds": 9.4
+    },
+    "M4": {
+      "rating": {
+        "rmse": 0.8460286448621677,
+        "mae": 0.641006356815514,
+        "predictions": 118785.0
+      },
+      "ranking": {
+        "users": 9137,
+        "relevant_users": 9137,
+        "metrics": {
+          "precision@5": 0.020159789865382367,
+          "recall@5": 0.020898052483382997,
+          "ndcg@5": 0.026701599515241887,
+          "precision@10": 0.015409871949217235,
+          "recall@10": 0.030410246565637265,
+          "ndcg@10": 0.028036395602546515,
+          "precision@20": 0.011267374411732286,
+          "recall@20": 0.04262808618003197,
+          "ndcg@20": 0.031047503901430955
+        },
+        "coverage": {
+          "coverage@5": 0.04601121666475907,
+          "coverage@10": 0.062836213803365,
+          "coverage@20": 0.08298042806455305
+        },
+        "novelty": {
+          "novelty@5": 11.284656241433145,
+          "novelty@10": 11.282434530679293,
+          "novelty@20": 11.663768110341383
+        }
+      },
+      "parameters": {
+        "factors": 32,
+        "bias_regularisation": 10.0,
+        "bias_iterations": 10,
+        "seed": 42
+      },
+      "fit_seconds": 2.2
+    }
+  }
+}
